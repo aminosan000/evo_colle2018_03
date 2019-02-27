@@ -1,19 +1,7 @@
 version: "3"
 services:
-  mysql:
-    image: mysql:5.7
-    container_name: evomysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: pass
-      MYSQL_DATABASE: evo_db
-    volumes:
-      - ./mysql_data:/var/lib/mysql
-    networks:
-      evonet:
-        ipv4_address: 172.16.238.20
   evoserver:
-    build: dockerdir
+    build: application
     image: evo/python:1.0
     ports:
       - 5000:80
@@ -21,7 +9,27 @@ services:
     networks:
       evonet:
         ipv4_address: 172.16.238.10
+  mysql:
+    image: mysql:5.7
+    container_name: evomysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+      # 初回起動時に自動生成するDB
+      MYSQL_DATABASE: evo_db
+    # コンテナにホストのディレクトリをマウント
+    volumes:
+      # 設定ファイル
+      - ./database/conf:/etc/mysql/mysql.conf.d/
+      # 初期化用SQL
+      - ./database/sql:/docker-entrypoint-initdb.d/
+      # データ格納場所
+      - ./database/data:/var/lib/mysql
+    networks:
+      evonet:
+        ipv4_address: 172.16.238.20
 
+# 2つのコンテナを入れるネットワーク
 networks:
   evonet:
     driver: bridge

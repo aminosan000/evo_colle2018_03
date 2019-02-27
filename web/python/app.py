@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import hashlib
+
 from flask import Flask, redirect, render_template, request, session
-from werkzeug.security import check_password_hash
 
 from dao import Dao
 
@@ -45,14 +46,18 @@ def login():
         password = request.form['password']
 
         user = dao.select_user(user_id)
-        if user and check_password_hash(user.password, password):
-            # ログイン成功
+        if user and check_password(user.password, password):
+            # ログイン成功した場合トップ画面へリダイレクト
             session['user_id'] = user_id
             return redirect('/')
         is_error = True
 
     # 直接アクセス時、または認証失敗した場合、ログイン画面を表示
     return render_template('login.html', is_error=is_error)
+
+
+def check_password(hash_val, password):
+    return hash_val == hashlib.sha256(password.encode()).hexdigest()
 
 
 @app.route('/logout')
