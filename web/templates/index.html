@@ -23,6 +23,18 @@
     <p>Mail: <input type="text" name="mail"></p>
     <p><input type="submit" value="登録"></p>
   </form>
+  <form action="/search" method="post">
+    <p>
+      <select name="column">
+        <option value="name">名前</option>
+        <option value="company">会社</option>
+        <option value="tel">TEL</option>
+        <option value="mail">Mail</option>
+      </select>
+      <input type="text" name="search_word">
+      <input type="submit" value="検索">
+    </p>
+  </form>
   <p>登録されている情報</p>
   <table>
     <tr>
@@ -37,6 +49,5 @@
     </tr>
     {% endfor %}
   </table>
-  <p><a href="/logout">ログアウト</a></p>
 </body>
 </html>
